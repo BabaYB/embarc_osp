@@ -16,10 +16,3 @@ CUR_CORE ?= arcem7d
 # For emsk 2.3 the udma controller hardware version is v2
 CORE_DEFINES += -DCORE_DMAC_INTERNAL_VERSION=2
 ONCHIP_IP_LIST ?= designware/iic designware/spi designware/uart designware/gpio
-
-##
-# For MCUBoot
-##
-FLASH_ALIGN ?= 8
-SLOT_SIZE ?= 0x03000000
-HEADER_SIZE ?= 0x400

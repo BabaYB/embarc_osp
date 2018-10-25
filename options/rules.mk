@@ -227,7 +227,7 @@ size : $(APPL_FULL_NAME).elf
 
 sign: $(APPL_FULL_NAME).bin
 	@$(ECHO) "Sign Application with mcuboot scripts"
-	$(Q)$(SIGN) $(SIGN_OPT)
+	$(Q)$(MCUBOOT_SIGN) $(MCUBOOT_SIGN_OPT)
 
 clean :
 	@$(ECHO) "Clean Workspace For Selected Configuration : $(SELECTED_CONFIG)"
