@@ -298,6 +298,8 @@ int main(void)
 
 	led_write(0xF0, 0xFF); /* Load application finished */
 
+	fp = (fp_t)(*((uint32_t *)boot_cfg.ram_startaddress));
+
 #if defined(EMBARC_USE_MCUBOOT)
 
 #if defined(BOARD_EMSK)
@@ -308,13 +310,10 @@ int main(void)
 	res = boot_go(&rsp);
 	if (res != 0) {
 		EMBARC_PRINTF("\r\nsecure boot failed \r\n");
-		EMBARC_PRINTF("\r\nStart NTShell Runtime...\r\n");
-		led_write(0x00, 0xFF);
-		nt_io = get_ntshell_io(BOARD_ONBOARD_NTSHELL_ID);
-		/** enter ntshell command routine no return */
-		ntshell_task((void *)nt_io);
+		EMBARC_PRINTF("\r\nStart normal boot\r\n");
 	} else {
 		EMBARC_PRINTF("\r\nsecure boot successfully \r\n");
+		fp = (fp_t)(*(uint32_t *)(rsp.br_image_off + rsp.br_hdr->ih_hdr_size));
 	}
 #endif
 
@@ -333,11 +332,6 @@ int main(void)
 
 	led_write(0xFF, 0xFF); /* Start application */
 
-#if defined(EMBARC_USE_MCUBOOT)
-	fp = (fp_t)(*(uint32_t *)(rsp.br_image_off + rsp.br_hdr->ih_hdr_size));
-#else
-	fp = (fp_t)(*((uint32_t *)boot_cfg.ram_startaddress));
-#endif
 	fp();	/* jump to program */
 	return E_SYS;
 }
