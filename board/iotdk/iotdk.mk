@@ -115,7 +115,7 @@ endif
 ##
 ifneq ($(findstring mcuboot, $(LIB_SEL)), )
 IMAGE_FLASH_ALIGN ?= 8
-IMAGE_SLOT_SIZE ?= 0x00080000
+IMAGE_SLOT_SIZE ?= 0x000C0000
 IMAGE_HEADER_SIZE ?= 0x400
 endif
 
