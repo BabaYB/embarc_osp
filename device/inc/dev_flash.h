@@ -52,7 +52,7 @@ typedef struct dev_flash {
     int32_t (*flash_close) ();
     int32_t (*flash_control) (uint32_t param1, void *param2);
     int32_t (*flash_write) (uint32_t addr, void *src, uint32_t len);
-    int32_t (*flash_read) (uint32_t addr, void *src, uint32_t len);
+    int32_t (*flash_read) (uint32_t addr, void *dst, uint32_t len);
     int32_t (*flash_erase) (uint32_t addr, uint32_t len);
 } DEV_FLASH, *DEV_FLASH_PTR;
 
