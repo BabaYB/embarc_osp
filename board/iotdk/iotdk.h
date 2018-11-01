@@ -57,6 +57,7 @@
 #include "drivers/smic/smic_adc/smic_adc.h"
 #include "drivers/smic/smic_eflash/smic_eflash.h"
 #include "drivers/smic/smic_bootspi/smic_bootspi.h"
+#include "drivers/flash_obj/flash_obj.h"
 #include "iotdk_hardware.h"
 
 /*-----------------------------------------------------------------------------*/
