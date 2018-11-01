@@ -42,6 +42,8 @@
 void emsk_flash_obj_all_install(void);
 
 #if (USE_EMSK_DDR_RAM)
+#define EMSK_DDR_RAM_BEGIN_ADDR 0x10000000
+#define EMSK_DDR_RAM_TOTAL_SIZE 0x8000000
 static DEV_FLASH emsk_ddr_ram_obj;
 
 static int32_t emsk_ddr_ram_open(uint32_t param1, void *param2)
@@ -97,7 +99,7 @@ error_exit:
 	return ercd;
 }
 
-static int32_t emsk_ddr_ram_read(uint32_t addr, void *src, uint32_t len)
+static int32_t emsk_ddr_ram_read(uint32_t addr, void *dst, uint32_t len)
 {
 	int32_t ercd = E_OK;
 	DEV_FLASH_PTR obj_ptr = &emsk_ddr_ram_obj;
@@ -110,7 +112,7 @@ static int32_t emsk_ddr_ram_read(uint32_t addr, void *src, uint32_t len)
 		len = info_ptr->begin_addr + info_ptr->total_size - len;
 	}
 
-	memcpy((void *)src, (const void *)addr, len);
+	memcpy((void *)dst, (const void *)addr, len);
 
 	return len;
 
@@ -164,8 +166,8 @@ static void emsk_ddr_ram_install(void)
 	DEV_FLASH_PTR obj_ptr = &emsk_ddr_ram_obj;
 	DEV_FLASH_INFO_PTR info_ptr = &(obj_ptr->flash_info);
 
-	info_ptr->begin_addr = EXT_RAM_START;
-	info_ptr->total_size = EXT_RAM_SIZE;
+	info_ptr->begin_addr = EMSK_DDR_RAM_BEGIN_ADDR;
+	info_ptr->total_size = EMSK_DDR_RAM_TOTAL_SIZE;
 	info_ptr->page_size = 0;
 	info_ptr->page_cnt = 0;
 	info_ptr->align_size = 1;
