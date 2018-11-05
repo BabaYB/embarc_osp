@@ -97,6 +97,9 @@
 
 #define BOARD_ONBOARD_NTSHELL_ID		(IOTDK_NTSHELL_0_ID)
 
+/** board exists flash device */
+#define BOARD_FLASH_EXIST			(1)
+
 /* iotdk DFSS SPI configuration */
 #ifndef BOARD_SPI_FREQ
 #define BOARD_SPI_FREQ				(1000000)
