@@ -143,6 +143,7 @@ done:
 static fp_t secure_boot(void)
 {
 	struct boot_rsp rsp;
+	int res;
 	fp_t fp = 0;
 
 	flash_device_open();
