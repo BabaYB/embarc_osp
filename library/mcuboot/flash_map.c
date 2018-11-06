@@ -110,6 +110,13 @@ void flash_device_close(void)
     flash_dev = NULL;
 }
 
+int flash_get_program_entry(uint32_t src)
+{
+    int dst;
+    flash_dev->flash_read(src, (void *)&dst, sizeof(dst));
+    return dst;
+}
+
 /*
  * `open` a flash area.  The `area` in this case is not the individual
  * sectors, but describes the particular flash area in question.

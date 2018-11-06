@@ -122,6 +122,11 @@ int flash_device_open(void);
 void flash_device_close(void);
 
 /*
+ * Get the program entry address
+ */
+int flash_get_program_entry(uint32_t src);
+
+/*
  * Start using flash area.
  */
 int flash_area_open(uint8_t id, const struct flash_area **area);
