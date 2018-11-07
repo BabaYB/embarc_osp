@@ -87,7 +87,7 @@ int main(void)
 
 	EMBARC_PRINTF("dev_flash: one byte write and read test\r\n");
 	DEV_FLASH_PTR bootspi_ptr = flash_get_dev(IOTDK_BOOT_SPI_FLASH_ID);
-	bootspi_ptr->flash_open(0, (void*)0);
+	bootspi_ptr->flash_open();
 	DEV_FLASH_INFO bootspi_info;
 	bootspi_ptr->flash_control(FLASH_CMD_GET_INFO, (void *)&bootspi_info);
 	EMBARC_PRINTF("bootspi: begin_addr = 0x%X, total_size = 0x%X\r\n",bootspi_info.begin_addr, bootspi_info.total_size);
