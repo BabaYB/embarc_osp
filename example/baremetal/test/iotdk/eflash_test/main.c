@@ -1,5 +1,5 @@
 /* ------------------------------------------
- * Copyright (c) 2017, Synopsys, Inc. All rights reserved.
+ * Copyright (c) 2018, Synopsys, Inc. All rights reserved.
 
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
@@ -39,6 +39,7 @@ uint8_t g_test_rd_buf[SMIC_EFLASH_PAGE_SIZE];
 int main(void)
 {
 	uint32_t page, ofst, i, size;
+	uint8_t bw, br;
 	SMIC_EFLASH_INFO eflash_info;
 
 	smic_eflash_open(eflash_test);
@@ -46,26 +47,22 @@ int main(void)
 	EMBARC_PRINTF("erase macro\n");
 	smic_eflash_control(eflash_test, SMIC_EFLASH_MACRO_ERASE, NULL);
 	size = eflash_info.eflash_page_size;
-	for (page = 0; page < eflash_info.eflash_page_cnt; page++)
-	{
+	for (page = 0; page < eflash_info.eflash_page_cnt; page++) {
 		// read data from page
 		EMBARC_PRINTF("read page 0x%x\n", page);
 		ofst = page * eflash_info.eflash_page_size;
 		smic_eflash_read(eflash_test, ofst, size, g_test_rd_buf);
 		// compare data, the data should be 0xFF after erase process
 		EMBARC_PRINTF("compare data in page 0x%x\n", page);
-		for (i = 0; i < size; i++)
-		{
-			if (g_test_rd_buf[i] != 0xFF)
-			{
+		for (i = 0; i < size; i++) {
+			if (g_test_rd_buf[i] != 0xFF) {
 				EMBARC_PRINTF("pos[0x%x], rd: 0x%x\n", i, g_test_rd_buf[i]);
 			}
 		}
 	}
 
 	// erase pages
-	for (page = 0; page < eflash_info.eflash_page_cnt; page++)
-	{
+	for (page = 0; page < eflash_info.eflash_page_cnt; page++) {
 		// earse page
 		EMBARC_PRINTF("erase page 0x%x\n", page);
 		ofst = page * eflash_info.eflash_page_size;
@@ -74,17 +71,14 @@ int main(void)
 		EMBARC_PRINTF("read page 0x%x\n", page);
 		smic_eflash_read(eflash_test, ofst, size, g_test_rd_buf);
 		// compare data, the data should be 0xFF after erase process
-		for (i = 0; i < size; i++)
-		{
-			if (g_test_rd_buf[i] != 0xFF)
-			{
+		for (i = 0; i < size; i++) {
+			if (g_test_rd_buf[i] != 0xFF) {
 				EMBARC_PRINTF("pos[0x%x], rd: 0x%x fail\n", i, g_test_rd_buf[i]);
 				break;
 			}
 		}
 
-		for (i = 0; i < size; i++)
-		{
+		for (i = 0; i < size; i++) {
 			g_test_wr_buf[i] = i & 0xFF;
 		}
 
@@ -97,16 +91,34 @@ int main(void)
 
 		// compare
 		EMBARC_PRINTF("compare data in page 0x%x\n", page);
-		for (i = 0; i < size; i++)
-		{
-			if (g_test_wr_buf[i] != g_test_rd_buf[i])
-			{
+		for (i = 0; i < size; i++) {
+			if (g_test_wr_buf[i] != g_test_rd_buf[i]) {
 				EMBARC_PRINTF("pos[0x%x], wr: 0x%x, rd: 0x%x fail\n", i, g_test_wr_buf[i], g_test_rd_buf[i]);
 				break;
 			}
 		}
 	}
 
+	for (page = 0; page < eflash_info.eflash_page_cnt; page++) {
+		ofst = page * eflash_info.eflash_page_size;
+		smic_eflash_control(eflash_test, SMIC_EFLASH_PAGE_ERASE, (void *)ofst);
+		smic_eflash_read(eflash_test, ofst, eflash_info.eflash_page_size, g_test_rd_buf);
+		for (i = 0; i < eflash_info.eflash_page_size; i++) {
+			if (g_test_rd_buf[i] != 0xFF) {
+				EMBARC_PRINTF("pos[0x%x], rd: 0x%x fail\n", i, g_test_rd_buf[i]);
+				break;
+			}
+		}
+	}
+
+	for (i = 0; i < size; i++) {
+		bw = 0xFF -(i & 0xFF);
+		smic_eflash_write(eflash_test, i, 1, &bw);
+		smic_eflash_read(eflash_test, i, 1, &br);
+		if(br != bw) {
+			EMBARC_PRINTF("pos[0x%x], wr: 0x%x, rd: 0x%x fail\n", i, bw, br);
+		}
+	}
 
 	EMBARC_PRINTF("%s\n", __func__);
 
