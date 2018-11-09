@@ -153,16 +153,15 @@ static fp_t secure_boot(void)
 
 	EMBARC_PRINTF("\r\nStart mcuboot\r\n");
 	res = boot_go(&rsp);
+	flash_device_close();
 	if (res != 0) {
 		EMBARC_PRINTF("\r\nsecure boot failed \r\n");
 		EMBARC_PRINTF("\r\nStart normal boot\r\n");
 	} else {
 		EMBARC_PRINTF("\r\nsecure boot successfully \r\n");
-		// fp = (fp_t)(*(uint32_t *)(rsp.br_image_off + rsp.br_hdr->ih_hdr_size));
-		fp = (fp_t)flash_get_program_entry(rsp.br_image_off + rsp.br_hdr->ih_hdr_size);
+		fp = (fp_t)(*(uint32_t *)(rsp.br_image_off + rsp.br_hdr->ih_hdr_size));
 	}
 
-	flash_device_close();
 	return fp;
 }
 
