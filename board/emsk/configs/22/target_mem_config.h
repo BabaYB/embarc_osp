@@ -27,6 +27,17 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
 --------------------------------------------- */
+/**
+ * \file
+ * \ingroup	BOARD_EMSK_COMMON_INIT
+ * \brief	emsk memory resource definitions
+ * \details
+ * - This header file will contain the memory resources on the board
+ * - User can select different region for applications by configuring
+     REGION_ROM and REGION_RAM
+ * - The unit of XXXX_SIZE is Byte
+ */
+
 #ifndef _TARGET_MEM_CONFIG_H_
 #define _TARGET_MEM_CONFIG_H_
 
@@ -37,9 +48,9 @@
 #endif
 
 /**
- * The unit of XXXX_SIZE is Byte
- * For REGION_ROM, ICCM, EXT_ROM and EXT_RAM are available
- * For REGION_RAM, DCCM and EXT_RAM are available
+ * DO NOT MODIFY THIS PART
+ *
+ * The information of memory devices on the board
  */
 #ifdef ARC_FEATURE_ICCM_PRESENT
 #ifndef ICCM_SIZE
@@ -73,7 +84,7 @@
 #endif
 #endif
 
-/* A fake ROM region, assigned from RAM region */
+/* A fake ROM, assigned from RAM */
 #ifndef EXT_ROM_START
 #define EXT_ROM_START	0x10000000
 #endif
@@ -91,10 +102,29 @@
 #endif
 
 /**
- * When the mcuboot used, set the specific memory layout
+ * The default regions assigned for application to use,
+   by default, each region will use all the space
+   of each memory device
+ * User can config the start address and the size of
+   the regions to limit the application using
  */
-#ifdef LIB_MCUBOOT
+#ifndef REGION_ICCM_START
+#define REGION_ICCM_START	ICCM_START
+#define REGION_ICCM_SIZE	ICCM_SIZE
+#endif
 
+#ifndef REGION_DCCM_START
+#define REGION_DCCM_START	DCCM_START
+#define REGION_DCCM_SIZE	DCCM_SIZE
+#endif
+
+#ifndef REGION_EXT_RAM_START
+#define REGION_EXT_RAM_START	EXT_RAM_START
+#define REGION_EXT_RAM_SIZE		EXT_RAM_SIZE
+#endif
+
+/* When the mcuboot used, need to set the specific memory layout of ROM */
+#ifdef LIB_MCUBOOT
 #ifdef USE_APPL_MEM_CONFIG
 #error "Cannot use USE_APPL_MEM_CONFIG to modify memory when mcuboot is enabled."
 #endif
@@ -126,61 +156,58 @@
 #define FLASH_DRIVER_NAME FLASH_DEV_NAME
 #endif
 
-/*
- * Sanity check the target support.
- */
-#if !defined(FLASH_DRIVER_NAME) || \
-    !defined(FLASH_ALIGN) ||                  \
-    !defined(FLASH_AREA_IMAGE_0_OFFSET) || \
-    !defined(FLASH_AREA_IMAGE_0_SIZE) || \
-    !defined(FLASH_AREA_IMAGE_1_OFFSET) || \
-    !defined(FLASH_AREA_IMAGE_1_SIZE) || \
-    !defined(FLASH_AREA_IMAGE_SCRATCH_OFFSET) || \
-    !defined(FLASH_AREA_IMAGE_SCRATCH_SIZE)
+/* Sanity check the target support */
+#if !defined(FLASH_DRIVER_NAME) || !defined(FLASH_ALIGN) ||                  \
+    !defined(FLASH_AREA_IMAGE_0_OFFSET) || !defined(FLASH_AREA_IMAGE_0_SIZE) || \
+    !defined(FLASH_AREA_IMAGE_1_OFFSET) || !defined(FLASH_AREA_IMAGE_1_SIZE) || \
+    !defined(FLASH_AREA_IMAGE_SCRATCH_OFFSET) || !defined(FLASH_AREA_IMAGE_SCRATCH_SIZE)
 #warning "Target support is incomplete; cannot build mcuboot."
 #endif
 
 #ifdef EMBARC_USE_MCUBOOT
-#define BL_ROM_START	FLASH_AREA_IMAGE_MCUBOOT_OFFSET
-#define BL_ROM_SIZE		FLASH_AREA_IMAGE_MCUBOOT_SIZE
+#define REGION_EXT_ROM_START	FLASH_AREA_IMAGE_MCUBOOT_OFFSET
+#define REGION_EXT_ROM_SIZE		FLASH_AREA_IMAGE_MCUBOOT_SIZE
 #define IMAGE_HEAD_SIZE 0x0
 #else
-#define BL_ROM_START	FLASH_AREA_IMAGE_0_OFFSET
-#define BL_ROM_SIZE		FLASH_AREA_IMAGE_0_SIZE
+#define REGION_EXT_ROM_START	FLASH_AREA_IMAGE_0_OFFSET
+#define REGION_EXT_ROM_SIZE		FLASH_AREA_IMAGE_0_SIZE
 #define IMAGE_HEAD_SIZE 0x400
 #endif
 
-#ifndef BL_RAM_START
-#define BL_RAM_START	EXT_RAM_START
-#endif
-
-#ifndef BL_RAM_SIZE
-#define BL_RAM_SIZE		EXT_RAM_SIZE
-#endif
-
-#define REGION_ROM	BL_ROM
-#define REGION_RAM	BL_RAM
+/* select region to generate link script */
+#define REGION_ROM	REGION_EXT_ROM
+#define REGION_RAM	REGION_EXT_RAM
 
 #else /* !defined(LIB_MCUBOOT) */
 
+#ifndef REGION_EXT_ROM_START
+#define REGION_EXT_ROM_START	EXT_ROM_START
+#define REGION_EXT_ROM_SIZE		EXT_ROM_SIZE
+#endif
+
+#define IMAGE_HEAD_SIZE 0x0
+#endif /* LIB_MCUBOOT */
+
+/**
+ * The default regions used to generate link script
+ * User can select region by configuring REGION_ROM and REGION_RAM
+ * For REGION_ROM, REGION_ICCM, REGION_EXT_ROM are available
+ * For REGION_RAM, REGION_DCCM and REGION_EXT_RAM are available
+ */
 #ifndef REGION_ROM
 #ifdef ARC_FEATURE_ICACHE_PRESENT
-#define REGION_ROM	EXT_ROM
+#define REGION_ROM	REGION_EXT_ROM
 #else
-#define REGION_ROM	ICCM
+#define REGION_ROM	REGION_ICCM
 #endif
 #endif
 
 #ifndef REGION_RAM
 #ifdef ARC_FEATURE_DCACHE_PRESENT
-#define REGION_RAM	EXT_RAM
+#define REGION_RAM	REGION_EXT_ROM
 #else
-#define REGION_RAM	DCCM
+#define REGION_RAM	REGION_DCCM
 #endif
 #endif
-
-#define IMAGE_HEAD_SIZE 0x0
-
-#endif /* !defined(LIB_MCUBOOT) */
 
 #endif /* _TARGET_MEM_CONFIG_H_ */
