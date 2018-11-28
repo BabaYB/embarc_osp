@@ -1,7 +1,12 @@
 # Application name
 APPL ?= freertos_net_ntshell
 
-EXT_DEV_LIST += wifi/mrf24g sensor/temperature/adt7420
+EXT_DEV_LIST += wifi/mrf24g
+
+ifeq ($(BOARD),emsk)
+EXT_DEV_LIST += sensor/temperature/adt7420
+endif
+
 
 #
 # root dir of embARC
@@ -11,7 +16,10 @@ EMBARC_ROOT = ../../../..
 # Selected OS
 OS_SEL ?= freertos
 # Select Middleware Packages
-MID_SEL = common ntshell lwip lwip-contrib fatfs
+MID_SEL += common ntshell lwip lwip-contrib
+ifeq ($(BOARD), emsk)
+MID_SEL += fatfs
+endif
 LWIP_CONTRIB_APPS ?=
 
 # application source dirs

@@ -16,8 +16,8 @@ use mbed TLS in both open source and closed source projects.
 
 embARC supports mbed TLS in FreeRTOS.
 
-Use mbed TLS
-============
+Using mbed TLS
+==============
 
 Due to export control requirements for United States companies, mbed TLS is
 not distributed as part of embARC. These packages have been ported and
@@ -58,5 +58,3 @@ Steps:
        +
        warning: 4 lines add whitespace errors.
        Patches are applied
-
-

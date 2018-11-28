@@ -6,11 +6,11 @@ ARC Processors
 Overview
 ########
 
-The ARC **Hardware Abstraction Layer** (HAL) provides hardware abstraction for
-|arc|. In this layer, the following functions are provided:
+The ARC **Hardware Abstraction Layer** (HAL) (``embarc_osp/arc`` folder) provides hardware abstraction for
+|arc|. The following functionality is provided by the ARC HAL:
 
 - :ref:`Start up <arc_hal_start>`: common startup routines or templates to handle necessary
-  initializations after power on, reset, and so on.
+  initializations after power on, reset, etc.
 
 - :ref:`Exception and interrupt management <arc_hal_exc_int>`: a standard exception and interrupt
   processing model and related resource definitions.
@@ -18,9 +18,9 @@ The ARC **Hardware Abstraction Layer** (HAL) provides hardware abstraction for
 - :ref:`Unified intrinsic/built-in functions <arc_hal_builtin>`: covering both the MetaWare and GNU
   toolchains.
 
-- :ref:`Unified resource definitions <arc_hal_res_def>`: registers, data types, macros, and so on.
+- :ref:`Unified resource definitions <arc_hal_res_def>`: registers, data types, macros, etc.
 
-- :ref:`Access to the resources <arc_hal_res_access>`: internal timers, cache, auxiliary registers,
+- :ref:`Access to core resources <arc_hal_res_access>`: internal timers, cache, auxiliary registers,
   and build configuration registers.
 
 .. _arc_hal_start:
@@ -42,11 +42,11 @@ which runs in three stages:
 
 - Stage 1: Hardware Initialization
 
-  * Initialize necessayr status and registers.
+  * Initialize necessary status and registers.
   * Initialize system clock (if necessary, in user defined ``hardware_init_hook``).
   * Initialize memory controller (if necessary, in user defined ``hardware_init_hook``).
 
-- Stage 2: C Run-time Initialization
+- Stage 2: C Runtime Initialization
 
   * Initialize the stack.
   * Copy section, e.g. data section, text section if necessary.
@@ -70,13 +70,13 @@ The following pre-defined work is done in ``board_main`` function:
 * Middleware initialization
 
   * initialize the ``xprintf`` function to have a console output
-  * initialize the FatFs and mount the sd card if ``MID_FATFS`` is enabled
-  * initialize NT-Shel if ``MID_NTSHELL`` is enabled
+  * initialize the FatFs and mount the SD card if ``MID_FATFS`` is enabled
+  * initialize NT-Shell if ``MID_NTSHELL`` is enabled
 
 * OS specific initialization if ``ENABLE_OS`` is defined
 
   * create main task for user ``main`` function
-  * create WiFi task if ·``MID_LWIP`` is enabled and WiFi module is used
+  * create WiFi task if ``MID_LWIP`` is enabled and WiFi module is used
 
 * jump to ``main`` function.
 
@@ -84,7 +84,7 @@ The following pre-defined work is done in ``board_main`` function:
 
 .. _arc_hal_exc_int:
 
-Exceptions and Interrupts Management
+Exception and Interrupt Management
 ####################################
 
 ARC exceptions and interrupts
@@ -127,10 +127,10 @@ Through this framework, you can handle specific exceptions or interrupts by
 installing the desired handlers. This can help you analyze the underlying
 details of saving and operating registers.
 
-For CPU exceptions and interrupts, entry(``exc_entry_cpu`` for CPU exception, ``exc_entry_int`` for interrupts) is called first, then handler is
-called in entry. You can define your own entry using ``exc_entry_install``.
+For CPU exceptions and interrupts, entry(``exc_entry_cpu`` for CPU exception, ``exc_entry_int`` for interrupts) is called first, after some processing then the specific exception handler is
+called in entry. You can define your own entry using ``exc_entry_install`` to replace the default behavior.
 
-A standard interrupt processing model is shown in the picture below.
+For interrupts, a standard interrupt processing model is shown in the picture below.
 
 .. image:: /pic/interrupt.jpg
     :alt: interrupt and exception processing
@@ -155,7 +155,7 @@ In this model, interrupts have the following features:
 For most Real-Time Operating Systems (RTOS), the task/process/thread priority
 is a positive number and starts from 1 (the highest priority).
 
-Negative numbers are used to define a unified priority scheme in embARC.
+Negative numbers are used to define a unified priority scheme in embARC OSP.
 Priority 0 (highest priority) is always assigned to the OS scheduler. A
 higher-priority task can preempt a lower-priority task. The OS scheduler can
 preempt any other tasks. But interrupt handling tasks with negative numbers
@@ -243,6 +243,8 @@ The DMA controller supports the following features:
 * Five data transfer modes (configurable down to one)
 * Internal and external interrupt support
 
+See ``arc_udma.h`` for further details.
+
 MPU
 :::
 
@@ -253,7 +255,7 @@ an associated attribute is not permitted, the ARCv2-based processors raises a
 Protection Violation exception, and this exception prevents the faulting
 instruction from completing.
 
-See ``arc_mpu.h`` for further details
+See ``arc_mpu.h`` for further details.
 
 Related files
 #############
